@@ -7,9 +7,8 @@ import {
   TRANSACTION_CATEGORY_LABELS,
   TRANSACTION_PAYMENT_METHOD_LABELS,
 } from "@/app/_constants/transactions";
-import { Button } from "@/app/_components/ui/button";
-import { Trash } from "lucide-react";
 import EditTransactionButton from "@/app/_components/edit-transaction-btn";
+import DeleteTransactionButton from "../_components/delete-transaction-btn";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -63,9 +62,7 @@ export const transactionColumns: ColumnDef<Transaction>[] = [
     cell: ({ row: { original: transaction } }) => (
       <div className="space-x-1">
         <EditTransactionButton transaction={transaction} />
-        <Button variant={"ghost"} size="icon" className="text-muted-foreground">
-          <Trash />
-        </Button>
+        <DeleteTransactionButton transaction={transaction} />
       </div>
     ),
   },

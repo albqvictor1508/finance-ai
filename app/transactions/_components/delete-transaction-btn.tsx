@@ -1,18 +1,59 @@
+import DeleteTransaction from "@/app/_actions/delete-transaction";
 import { Button } from "@/app/_components/ui/button";
-import { Transaction } from "@prisma/client";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/app/_components/ui/dialog";
 import { TrashIcon } from "lucide-react";
+import { useState } from "react";
 
 interface DeleteTransactionProps {
-  transaction: Transaction;
+  transactionId: string;
 }
 
-const DeleteTransactionButton = ({}: DeleteTransactionProps) => {
-  // function handleDelete() {} //comentei e tirei tudo pq o lint-staged ta enchendo o saco
-  //criar um dialog pra perguntar se o usuário tem certeza e criar a server action que vai deletar a transaction na pasta "_actions"
+const DeleteTransactionButton = ({ transactionId }: DeleteTransactionProps) => {
+  const [dialogIsOpen, setDialogIsOpen] = useState(false);
+  const onSubmit = async () => {
+    try {
+      await DeleteTransaction(transactionId);
+      setDialogIsOpen(false);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return (
-    <Button variant={"ghost"}>
-      <TrashIcon />
-    </Button>
+    <Dialog open={dialogIsOpen} onOpenChange={(open) => setDialogIsOpen(open)}>
+      <DialogTrigger asChild>
+        <Button variant={"ghost"}>
+          <TrashIcon />
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Remove Transaction</DialogTitle>
+        </DialogHeader>
+        <DialogDescription>
+          <span>Are you sure?</span>
+        </DialogDescription>
+        <DialogFooter>
+          <DialogClose>
+            <Button type="button" variant={"outline"}>
+              Cancel
+            </Button>
+          </DialogClose>
+          <Button type="submit" onClick={onSubmit}>
+            Remove
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
 

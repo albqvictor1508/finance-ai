@@ -62,7 +62,7 @@ export const transactionColumns: ColumnDef<Transaction>[] = [
     cell: ({ row: { original: transaction } }) => (
       <div className="space-x-1">
         <EditTransactionButton transaction={transaction} />
-        <DeleteTransactionButton transaction={transaction} />
+        <DeleteTransactionButton transactionId={transaction.id} />
       </div>
     ),
   },

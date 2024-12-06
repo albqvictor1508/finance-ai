@@ -10,6 +10,7 @@ import ExpensePerCategory from "./_components/expense-per-category";
 import LastTransactions from "./_components/last-transactions";
 import { ScrollArea } from "../_components/ui/scroll-area";
 import AIReportButton from "./_components/ai-report-button";
+import CanUserAddTransactions from "../_data/can-user-add-transaction";
 
 interface HomeProps {
   searchParams: {
@@ -26,6 +27,8 @@ const Home = async ({ searchParams: { month } }: HomeProps) => {
   if (monthIsInvalid) {
     redirect(`/?month=${new Date().getMonth() + 1}`);
   }
+
+  const canUserAddTransactions = await CanUserAddTransactions();
   const dashboard = await getDashboard(month);
   const user = await clerkClient().users.getUser(userId);
   return (
@@ -46,7 +49,11 @@ const Home = async ({ searchParams: { month } }: HomeProps) => {
         </div>
         <div className="grid grid-cols-[2fr,1fr] gap-6 overflow-hidden">
           <div className="flex flex-col gap-6 overflow-hidden">
-            <SummaryCards month={month} {...dashboard} />
+            <SummaryCards
+              month={month}
+              {...dashboard}
+              usersCanAddTransactions={canUserAddTransactions}
+            />
             <div className="grid grid-cols-3 grid-rows-1 gap-3 overflow-hidden">
               <ScrollArea>
                 <TransactionsPieChart {...dashboard} />

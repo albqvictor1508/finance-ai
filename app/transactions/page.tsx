@@ -19,7 +19,7 @@ const Transactions = async () => {
       userId,
     },
   }); //busca tudo q tem no banco
-  const canUserAddTransactions = await CanUserAddTransactions();
+  const canUserAddTransactions = await CanUserAddTransactions(); //adicionar isso na home
   return (
     <>
       <Navbar />

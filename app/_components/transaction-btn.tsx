@@ -24,7 +24,7 @@ const TransactionButton = ({
     <>
       <TooltipProvider>
         <Tooltip>
-          <TooltipTrigger>
+          <TooltipTrigger asChild>
             <Button
               className="rounded-full font-bold"
               onClick={() => setDialogIsOpen(true)}

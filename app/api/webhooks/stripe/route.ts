@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
 export const POST = async (request: Request) => {
-  if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_WEBHOOK_SECRET) {
+  if (!process.env.STRIPE_SECRET_KEY_DEV || !process.env.STRIPE_WEBHOOK_SECRET) {
     return NextResponse.error();
   }
   const signature = request.headers.get("stripe-signature");
@@ -11,7 +11,7 @@ export const POST = async (request: Request) => {
     return NextResponse.error();
   }
   const text = await request.text();
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY_DEV, {
     apiVersion: "2024-10-28.acacia",
   });
   const event = stripe.webhooks.constructEvent(

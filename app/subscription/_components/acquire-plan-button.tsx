@@ -10,11 +10,13 @@ const AcquirePlanButton = () => {
   const { user } = useUser();
   const handleAcquirePlanClick = async () => {
     const { sessionId } = await createStripeCheckout();
-    if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
+    console.log(sessionId);
+
+    if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_DEV) {
       throw new Error("stripe public key not founded");
     }
     const stripe = await loadStripe(
-      process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
+      process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_DEV,
     );
     if (!stripe) {
       throw new Error("Stripe not found");
@@ -22,6 +24,8 @@ const AcquirePlanButton = () => {
     await stripe.redirectToCheckout({ sessionId });
   };
   const hasPremiumPlan = user?.publicMetadata.subscriptionPlan === "premium";
+  console.log(user);
+  console.log("metadata", user?.publicMetadata);
   if (hasPremiumPlan) {
     return (
       <Button className="w-full rounded-full font-bold">

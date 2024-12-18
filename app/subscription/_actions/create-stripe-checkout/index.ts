@@ -5,6 +5,8 @@ import Stripe from "stripe";
 
 export const createStripeCheckout = async () => {
   const { userId } = await auth();
+  console.log("USER ID: ", userId);
+
   if (!userId) throw new Error("Unauthorized");
 
   if (!process.env.STRIPE_SECRET_KEY_DEV) {
@@ -29,6 +31,6 @@ export const createStripeCheckout = async () => {
       clerk_user_id: userId,
     },
   });
-  console.log(session.id);
+  console.log("SESSION ID: ", session.id);
   return { sessionId: session.id };
 };

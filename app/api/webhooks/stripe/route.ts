@@ -41,7 +41,6 @@ export const POST = async (request: Request) => {
       { status: 400 },
     );
   }
-  console.log("ouvindo eventos...");
 
   if (!event) {
     console.log("event é undefined");
@@ -51,11 +50,15 @@ export const POST = async (request: Request) => {
   switch (event.type) {
     case "invoice.paid": {
       // Atualizar o usuário com o seu novo plano
-      const invoice = event.data.object as Stripe.Invoice; // coloquei o invoice em geral em vez do distructuring
+      const invoice = event.data.object;
+      console.log(invoice);
       const clerkUserId = invoice.metadata?.clerk_user_id;
 
       if (!clerkUserId) {
-        console.log("faltando o clerk user id nos metadados");
+        console.log(
+          "faltando o clerk user id nos metadados, valor do clerk user id: ",
+          clerkUserId,
+        );
         return NextResponse.json(
           { error: "Faltando user ID no clerk" },
           { status: 400 },

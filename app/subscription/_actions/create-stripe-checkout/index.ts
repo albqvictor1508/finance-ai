@@ -19,15 +19,15 @@ export const createStripeCheckout = async () => {
     mode: "subscription",
     success_url: "http://localhost:3000",
     cancel_url: "http://localhost:3000",
-      metadata: {
-        clerk_user_id: userId,
-      },
     line_items: [
       {
         price: process.env.STRIPE_PREMIUM_PLAN_PRICE_ID_DEV,
         quantity: 1,
       },
     ],
+    metadata: {
+      clerk_user_id: userId,
+    },
   });
   console.log(session.id);
   return { sessionId: session.id };

@@ -1,22 +1,25 @@
 import { clerkClient } from "@clerk/nextjs/server";
-import { error } from "console";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
 console.log("Webhook running");
 
 export const POST = async (request: Request) => {
-  if (!process.env.STRIPE_SECRET_KEY_DEV || !process.env.STRIPE_WEBHOOK_SECRET) {
+  if (
+    !process.env.STRIPE_SECRET_KEY_DEV ||
+    !process.env.STRIPE_WEBHOOK_SECRET
+  ) {
     console.log("faltando as variáveis de ambiente");
     return NextResponse.error();
   }
 
-  console.log("Estou dentro da função POST");
-
   const signature = request.headers.get("stripe-signature");
   if (!signature) {
-    console.log("faltando a signature do stripe")
-    return NextResponse.error();
+    console.log("faltando a signature do stripe");
+    return NextResponse.json(
+      { error: "faltando a signature do stripe" },
+      { status: 400 },
+    );
   }
   const text = await request.text();
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY_DEV, {
@@ -26,30 +29,40 @@ export const POST = async (request: Request) => {
   let event;
 
   try {
-    event = stripe.webhooks.constructEvent(text,signature,process.env.STRIPE_WEBHOOK_SECRET)
+    event = stripe.webhooks.constructEvent(
+      text,
+      signature,
+      process.env.STRIPE_WEBHOOK_SECRET,
+    );
   } catch (error) {
     console.log("ERRO NA VERIFICAÇÃO DO STRIPE: ", error);
-    return NextResponse.json({error: "verificação do Webhook falhou"}, {status: 400})
+    return NextResponse.json(
+      { error: "verificação do Webhook falhou" },
+      { status: 400 },
+    );
   }
-  console.log("ouvindo eventos...")  
+  console.log("ouvindo eventos...");
 
-  if(!event) {
+  if (!event) {
     console.log("event é undefined");
     return;
-  };
+  }
 
   switch (event.type) {
     case "invoice.paid": {
       // Atualizar o usuário com o seu novo plano
-      const invoice = event.data.object as Stripe.Invoice // coloquei o invoice em geral em vez do distructuring
+      const invoice = event.data.object as Stripe.Invoice; // coloquei o invoice em geral em vez do distructuring
       const clerkUserId = invoice.metadata?.clerk_user_id;
 
       if (!clerkUserId) {
         console.log("faltando o clerk user id nos metadados");
-        return NextResponse.json({error: "Faltando user ID no clerk"}, {status: 400});
+        return NextResponse.json(
+          { error: "Faltando user ID no clerk" },
+          { status: 400 },
+        );
       }
 
-      console.log("LOG DOS INVOICES: ",invoice.customer, invoice.subscription);
+      console.log("LOG DOS INVOICES: ", invoice.customer, invoice.subscription);
 
       await clerkClient().users.updateUser(clerkUserId, {
         privateMetadata: {
@@ -70,8 +83,11 @@ export const POST = async (request: Request) => {
       const clerkUserId = subscription.metadata.clerk_user_id;
 
       if (!clerkUserId) {
-        console.error("user id faltando nos metadados do clerk")
-        return NextResponse.json({error: "faltando user ID"}, {status: 400});
+        console.error("user id faltando nos metadados do clerk");
+        return NextResponse.json(
+          { error: "faltando user ID" },
+          { status: 400 },
+        );
       }
       await clerkClient().users.updateUser(clerkUserId, {
         privateMetadata: {
@@ -83,8 +99,14 @@ export const POST = async (request: Request) => {
         },
       });
     }
+
+    default: {
+      console.log(
+        `evento diferente dos que foram capturados no switch: ${event.type}`,
+      );
+    }
   }
 
   console.log("fim da função");
-  return NextResponse.json({ received: true }, {status: 200});
+  return NextResponse.json({ received: true }, { status: 200 });
 };

@@ -27,8 +27,10 @@ export const createStripeCheckout = async () => {
         quantity: 1,
       },
     ],
-    metadata: {
-      clerk_user_id: userId,
+    subscription_data: {
+      metadata: {
+        clerk_user_id: userId,
+      },
     },
   });
   console.log("SESSION ID: ", session.id);

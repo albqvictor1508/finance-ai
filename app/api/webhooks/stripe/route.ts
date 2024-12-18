@@ -51,8 +51,9 @@ export const POST = async (request: Request) => {
     case "invoice.paid": {
       // Atualizar o usuário com o seu novo plano
       const invoice = event.data.object;
-      console.log(invoice);
-      const clerkUserId = invoice.metadata?.clerk_user_id;
+      console.log("CHAVES DO INVOICE: ", invoice);
+
+      const clerkUserId = invoice.subscription_details?.metadata?.clerk_user_id;
 
       if (!clerkUserId) {
         console.log(

@@ -9,11 +9,11 @@ export const createStripeCheckout = async () => {
 
   if (!userId) throw new Error("Unauthorized");
 
-  if (!process.env.STRIPE_SECRET_KEY_DEV) {
+  if (!process.env.STRIPE_SECRET_KEY_PROD) {
     throw new Error("Stripe secret key not founded");
   }
 
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY_DEV, {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY_PROD, {
     apiVersion: "2024-10-28.acacia",
   });
   const session = await stripe.checkout.sessions.create({
@@ -23,7 +23,7 @@ export const createStripeCheckout = async () => {
     cancel_url: "http://localhost:3000",
     line_items: [
       {
-        price: process.env.STRIPE_PREMIUM_PLAN_PRICE_ID_DEV,
+        price: process.env.STRIPE_PREMIUM_PLAN_PRICE_ID_PROD,
         quantity: 1,
       },
     ],

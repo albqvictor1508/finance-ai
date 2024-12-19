@@ -12,11 +12,11 @@ const AcquirePlanButton = () => {
     const { sessionId } = await createStripeCheckout();
     console.log(sessionId);
 
-    if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_DEV) {
+    if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_PROD) {
       throw new Error("stripe public key not founded");
     }
     const stripe = await loadStripe(
-      process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_DEV,
+      process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_PROD,
     );
     if (!stripe) {
       throw new Error("Stripe not found");

@@ -6,7 +6,7 @@ console.log("Webhook running");
 
 export const POST = async (request: Request) => {
   if (
-    !process.env.STRIPE_SECRET_KEY_DEV ||
+    !process.env.STRIPE_SECRET_KEY_PROD ||
     !process.env.STRIPE_WEBHOOK_SECRET
   ) {
     console.log("faltando as variáveis de ambiente");
@@ -22,7 +22,7 @@ export const POST = async (request: Request) => {
     );
   }
   const text = await request.text();
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY_DEV, {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY_PROD, {
     apiVersion: "2024-10-28.acacia",
   });
 

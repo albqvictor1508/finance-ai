@@ -21,6 +21,7 @@ const generateAIReport = async ({ month }: GenerateAIReportSchema) => {
   const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
   });
+
   //pegar as transações do mês recebido
   const transactions = await db.transaction.findMany({
     where: {
@@ -56,6 +57,6 @@ const generateAIReport = async ({ month }: GenerateAIReportSchema) => {
 
   //pegar o relatório pronto pelo chat e retornar pro usuário
   return completion.choices[0].message.content;
-};
+}; // não ta pegando pq to sem crédito na openAI
 
 export default generateAIReport;

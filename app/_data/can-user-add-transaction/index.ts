@@ -7,6 +7,7 @@ const CanUserAddTransactions = async () => {
     throw new Error("Unauthorized");
   }
   const user = await clerkClient().users.getUser(userId);
+
   if (user.publicMetadata.subscriptionPlan === "premium") {
     return true;
   }

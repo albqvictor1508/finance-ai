@@ -2,20 +2,16 @@ import { clerkClient } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
-console.log("Webhook running");
-
 export const POST = async (request: Request) => {
   if (
     !process.env.STRIPE_SECRET_KEY_PROD ||
     !process.env.STRIPE_WEBHOOK_SECRET
   ) {
-    console.log("faltando as variáveis de ambiente");
     return NextResponse.error();
   }
 
   const signature = request.headers.get("stripe-signature");
   if (!signature) {
-    console.log("faltando a signature do stripe");
     return NextResponse.json(
       { error: "faltando a signature do stripe" },
       { status: 400 },
@@ -35,7 +31,7 @@ export const POST = async (request: Request) => {
       process.env.STRIPE_WEBHOOK_SECRET,
     );
   } catch (error) {
-    console.log("ERRO NA VERIFICAÇÃO DO STRIPE: ", error);
+    console.error("ERRO NA VERIFICAÇÃO DO STRIPE: ", error);
     return NextResponse.json(
       { error: "verificação do Webhook falhou" },
       { status: 400 },
@@ -43,7 +39,7 @@ export const POST = async (request: Request) => {
   }
 
   if (!event) {
-    console.log("event é undefined");
+    console.error("event é undefined");
     return;
   }
 
@@ -51,12 +47,11 @@ export const POST = async (request: Request) => {
     case "invoice.paid": {
       // Atualizar o usuário com o seu novo plano
       const invoice = event.data.object;
-      console.log("CHAVES DO INVOICE: ", invoice);
 
       const clerkUserId = invoice.subscription_details?.metadata?.clerk_user_id;
 
       if (!clerkUserId) {
-        console.log(
+        console.error(
           "faltando o clerk user id nos metadados, valor do clerk user id: ",
           clerkUserId,
         );
@@ -65,8 +60,6 @@ export const POST = async (request: Request) => {
           { status: 400 },
         );
       }
-
-      console.log("LOG DOS INVOICES: ", invoice.customer, invoice.subscription);
 
       await clerkClient().users.updateUser(clerkUserId, {
         privateMetadata: {
@@ -103,14 +96,7 @@ export const POST = async (request: Request) => {
         },
       });
     }
-
-    default: {
-      console.log(
-        `evento diferente dos que foram capturados no switch: ${event.type}`,
-      );
-    }
   }
 
-  console.log("fim da função");
   return NextResponse.json({ received: true }, { status: 200 });
 };

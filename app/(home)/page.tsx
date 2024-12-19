@@ -40,8 +40,6 @@ const Home = async ({ searchParams: { month } }: HomeProps) => {
     return redirect("/login");
   }
 
-  console.log("USER FETCHED: ", user);
-
   return (
     <>
       <Navbar />

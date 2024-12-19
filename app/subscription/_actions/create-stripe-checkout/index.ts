@@ -5,7 +5,6 @@ import Stripe from "stripe";
 
 export const createStripeCheckout = async () => {
   const { userId } = await auth();
-  console.log("USER ID: ", userId);
 
   if (!userId) throw new Error("Unauthorized");
 
@@ -33,6 +32,5 @@ export const createStripeCheckout = async () => {
       },
     },
   });
-  console.log("SESSION ID: ", session.id);
   return { sessionId: session.id };
 };
